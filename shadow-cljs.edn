@@ -1,0 +1,7 @@
+{:lein         {:profile "+shadow-cljs"}
+ :builds       {:app {:target     :browser
+                      :output-dir "resources/public/js"
+                      :asset-path "/js"
+                      :modules    {:app {:init-fn enjoy-reagent.core/init!}}}}
+ :dev-http     {3000 {:root    "resources/public"
+                      :handler enjoy-reagent.handler/app}}}
