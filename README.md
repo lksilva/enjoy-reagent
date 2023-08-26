@@ -1,9 +1,11 @@
 # enjoy-reagent
 
-This is the enjoy-reagent project.
+This is the enjoy-reagent project. A project the uses the power of ClojureScript Interoperaliby and the [drag and drop](https://web.dev/drag-and-drop/) js api allowing us to create a drag and drop functional using only few lines of Clojure code.
 
 ## Requirements
+
 [Install Clojure](https://clojure.org/guides/install_clojure)
+
 [Install Leiningen](https://leiningen.org/)
 
 ## Development mode
