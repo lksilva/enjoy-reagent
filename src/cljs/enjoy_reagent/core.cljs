@@ -19,14 +19,22 @@
       [:div.blue-box
        {:style {:left (str (:x @xy) "px")
                 :top (str (:y @xy) "px")}
-        :draggable true}
+        :draggable true
+        :on-drag-start
+        (fn [e]
+          (.log js/console e)
+          (-> e
+              .-dataTransfer
+              (.setData "text/plain" (-> e .-target .-id)))
+          ;; TODO: in the drag over movement, set origina color
+          (set! (.. e -currentTarget -style -backgroundColor) "#c8dfff"))}
        "Move"])))
 
 (defn current-page []
   (fn []
     [:div.container
      [:div.left
-      [blue-box]
+      [blue-box {:id "bb1"}]
       [blue-box]
       [blue-box]
       [blue-box]
