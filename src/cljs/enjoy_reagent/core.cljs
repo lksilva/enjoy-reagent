@@ -28,7 +28,6 @@
       :draggable true
       :on-drag-start
       (fn [e]
-        (.log js/console e)
         (-> e
             .-dataTransfer
             (.setData "text/plain" (-> e .-target .-id)))
