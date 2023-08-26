@@ -2,6 +2,10 @@
 
 This is the enjoy-reagent project.
 
+## Requirements
+[Install Clojure](https://clojure.org/guides/install_clojure)
+[Install Leiningen](https://leiningen.org/)
+
 ## Development mode
 
 To start the Figwheel compiler, navigate to the project folder and run the following command in the terminal:
