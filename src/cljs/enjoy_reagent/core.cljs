@@ -5,19 +5,30 @@
    [clerk.core :as clerk]))
 
 ;; TODO:
-;; Move the blue box
-;; Be able to drag and drop blue box
+;; Be able to move multiple blue boxes
 ;; Show visible area of red box
 ;; Identify when a blue is on top of red
 ;; Calculate the difference when a blue box is on top of red box
 (defn red-box []
-  [:div.red-box])
+  [:div.red-box
+   {:on-drag-over
+    (fn [e]
+      (.preventDefault e))
+    :on-drop
+    (fn [e]
+      (let [id (-> e .-dataTransfer (.getData "text"))
+            element (-> js/document (.getElementById id))
+            available-zone (-> e .-target)]
+        (.appendChild available-zone element)
+        ))}
+   "Drag and drop area"])
 
-(defn blue-box []
+(defn blue-box [{:keys [id]}]
   (let [xy (reagent/atom {:x 0 :y 0})]
     (fn []
       [:div.blue-box
-       {:style {:left (str (:x @xy) "px")
+       {:id id
+        :style {:left (str (:x @xy) "px")
                 :top (str (:y @xy) "px")}
         :draggable true
         :on-drag-start
@@ -27,6 +38,7 @@
               .-dataTransfer
               (.setData "text/plain" (-> e .-target .-id)))
           ;; TODO: in the drag over movement, set origina color
+          (.log js/console e)
           (set! (.. e -currentTarget -style -backgroundColor) "#c8dfff"))}
        "Move"])))
 
