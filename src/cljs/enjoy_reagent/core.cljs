@@ -1,6 +1,5 @@
 (ns enjoy-reagent.core
   (:require
-   [reagent.core :as reagent :refer [atom]]
    [reagent.dom :as rdom]
    [clerk.core :as clerk]))
 
@@ -24,23 +23,20 @@
    "Drag and drop area"])
 
 (defn blue-box [{:keys [id]}]
-  (let [xy (reagent/atom {:x 0 :y 0})]
-    (fn []
-      [:div.blue-box
-       {:id id
-        :style {:left (str (:x @xy) "px")
-                :top (str (:y @xy) "px")}
-        :draggable true
-        :on-drag-start
-        (fn [e]
-          (.log js/console e)
-          (-> e
-              .-dataTransfer
-              (.setData "text/plain" (-> e .-target .-id)))
+  (fn []
+    [:div.blue-box
+     {:id id
+      :draggable true
+      :on-drag-start
+      (fn [e]
+        (.log js/console e)
+        (-> e
+            .-dataTransfer
+            (.setData "text/plain" (-> e .-target .-id)))
           ;; TODO: in the drag over movement, set origina color
-          (.log js/console e)
-          (set! (.. e -currentTarget -style -backgroundColor) "#c8dfff"))}
-       "Move"])))
+        (.log js/console e)
+        (set! (.. e -currentTarget -style -backgroundColor) "#c8dfff"))}
+     "Move"]))
 
 (defn current-page []
   (fn []
