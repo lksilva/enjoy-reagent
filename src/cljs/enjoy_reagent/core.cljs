@@ -4,10 +4,23 @@
    [reagent.dom :as rdom]
    [clerk.core :as clerk]))
 
+(defn red-box []
+  [:div.red-box])
+
+(defn blue-box []
+  [:div.blue-box])
+
 (defn current-page []
   (fn []
-    [:div
-     [:h1 "Hellow World"]]))
+    [:div.container
+     [:div.left
+      [blue-box]
+      [blue-box]
+      [blue-box]
+      [blue-box]
+      [blue-box]]
+     [:div.right
+      [red-box]]]))
 
 ;; -------------------------
 ;; Initialize app
