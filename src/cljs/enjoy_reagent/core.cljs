@@ -5,12 +5,27 @@
    [clerk.core :as clerk]))
 
 (defn calc-area
-  [total-size item]
-  (let [item-size (* (-> item .getBoundingClientRect .-width) (-> item .getBoundingClientRect .-height))]
-    (- total-size item-size)))
+  "Simple area canculation for rectangular shapes"
+  [width height]
+  (* width height))
 
-;; TODO:
-;; Apply space between the moved blue-box 
+(defn initialize-area
+  "Calculate and set the value of initial visible area"
+  [visible-area]
+  (let [container (-> js/document (.getElementById "droppable"))
+        width (-> container .getBoundingClientRect .-width)
+        height (-> container .getBoundingClientRect .-height)]
+    (reset! visible-area (calc-area width height))))
+
+(defn diff-area
+  "Define the new red component visible area"
+  [total-area item]
+  (let [width (-> item .getBoundingClientRect .-width)
+        height (-> item .getBoundingClientRect .-height)
+        item-area (calc-area width height)]
+    (- total-area item-area)))
+
+;; TODO: in the drag over movement, set origina color
 (defn red-box [visible-area]
   [:div.red-box
    {:id :droppable
@@ -23,10 +38,10 @@
             element (-> js/document (.getElementById id))
             available-zone (-> e .-target)]
         (.appendChild available-zone element)
-        (reset! visible-area (calc-area @visible-area element))
+        (reset! visible-area (diff-area @visible-area element))
         ))}
    ""])
-;; (* (-> red-container .getBoundingClientRect .-width) (-> red-container .getBoundingClientRect .-height))
+
 (defn blue-box [{:keys [id]}]
   (fn []
     [:div.blue-box
@@ -37,9 +52,8 @@
         (-> e
             .-dataTransfer
             (.setData "text/plain" (-> e .-target .-id)))
-          ;; TODO: in the drag over movement, set origina color
         (set! (.. e -currentTarget -style -backgroundColor) "#c8dfff")
-        #_(set! (.. e -currentTarget -style -marginBottom) "5px"))}
+        (set! (.. e -currentTarget -style -marginBottom) "5px"))}
      ""]))
 
 (defn current-page []
@@ -47,8 +61,7 @@
     (r/create-class
      {:component-did-mount
       (fn []
-        (let [red-container (-> js/document (.getElementById "droppable"))]
-          (reset! visible-area (* (-> red-container .getBoundingClientRect .-width) (-> red-container .getBoundingClientRect .-height)))))
+        (initialize-area visible-area))
       :reagent-render
       (fn []
         [:<>
