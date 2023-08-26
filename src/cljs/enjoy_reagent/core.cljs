@@ -25,7 +25,6 @@
         item-area (calc-area width height)]
     (- total-area item-area)))
 
-;; TODO: in the drag over movement, set origina color
 (defn red-box [visible-area]
   [:div.red-box
    {:id :droppable
