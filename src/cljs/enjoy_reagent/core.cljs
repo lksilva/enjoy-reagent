@@ -4,19 +4,16 @@
    [reagent.core :as r]
    [clerk.core :as clerk]))
 
-(def initial-state
-  {:width 200
-   :height 250})
+(defn calc-area
+  [total-size item]
+  (let [item-size (* (-> item .getBoundingClientRect .-width) (-> item .getBoundingClientRect .-height))]
+    (- total-size item-size)))
 
 ;; TODO:
-;; Identify when a blue is on top of red
-;; Do the calc of red container dynamic discading the initial state value
-;; Calculate the difference when a blue box is on top of red box
 ;; Apply space between the moved blue-box 
-(defn red-box [initial-state visible-area]
+(defn red-box [visible-area]
   [:div.red-box
-   {:style {:width (:width initial-state)
-            :height (:height initial-state)}
+   {:id :droppable
     :on-drag-over
     (fn [e]
       (.preventDefault e))
@@ -26,15 +23,10 @@
             element (-> js/document (.getElementById id))
             available-zone (-> e .-target)]
         (.appendChild available-zone element)
-        (.log js/console e)
-        (.log js/console (-> e .-target .getBoundingClientRect))
-        (.log js/console (-> element .getBoundingClientRect))
-        (swap! visible-area assoc
-               :x (- (-> available-zone .getBoundingClientRect .-width) (-> element .getBoundingClientRect .-width))
-               :y (- (-> available-zone .getBoundingClientRect .-height) (-> element  .getBoundingClientRect .-height)))
+        (reset! visible-area (calc-area @visible-area element))
         ))}
    ""])
-
+;; (* (-> red-container .getBoundingClientRect .-width) (-> red-container .getBoundingClientRect .-height))
 (defn blue-box [{:keys [id]}]
   (fn []
     [:div.blue-box
@@ -51,20 +43,26 @@
      ""]))
 
 (defn current-page []
-  (let [visible-area (r/atom {:x (:width initial-state) :y (:height initial-state)})]
-    (fn []
-      [:<>
-       [:div.container
-        [:div.left
-         [blue-box {:id "bb1"}]
-         [blue-box {:id "bb2"}]
-         [blue-box {:id "bb3"}]
-         [blue-box {:id "bb4"}]
-         [blue-box {:id "bb5"}]]
-        [:div.right
-         [red-box initial-state visible-area]]]
-       [:div.description
-        [:span (str "Total visible area: " (* (:x @visible-area) (:y @visible-area)) "px")]]])))
+  (let [visible-area (r/atom 0)]
+    (r/create-class
+     {:component-did-mount
+      (fn []
+        (let [red-container (-> js/document (.getElementById "droppable"))]
+          (reset! visible-area (* (-> red-container .getBoundingClientRect .-width) (-> red-container .getBoundingClientRect .-height)))))
+      :reagent-render
+      (fn []
+        [:<>
+         [:div.container
+          [:div.left
+           [blue-box {:id "bb1"}]
+           [blue-box {:id "bb2"}]
+           [blue-box {:id "bb3"}]
+           [blue-box {:id "bb4"}]
+           [blue-box {:id "bb5"}]]
+          [:div.right
+           [red-box visible-area]]]
+         [:div.description
+          [:span (str "Total visible area: " @visible-area "px")]]])})))
 
 ;; -------------------------
 ;; Initialize app

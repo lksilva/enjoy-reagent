@@ -17,6 +17,8 @@ body{
 .red-box {
     background: red;
     padding: 15px;
+    width: 200px;
+    height: 250px;
 }
 
 .blue-box {
